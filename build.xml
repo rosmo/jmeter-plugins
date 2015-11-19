@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+build script based on Alfresco JMeter Load Test Plugin build
+script by Abhinav Kumar Mishra
+-->
+<project name="Deterministic Random Order Controller" default="build-jar" basedir=".">
+
+    <!-- JMeter Home (Change the value as per your installation directory) -->
+    <property name="jmeter.home" value="/Users/Leppae/jmeter/apache-jmeter-2.13"/>
+    <property name="jmeter.plugin-lib" value="${jmeter.home}/lib/ext"/>
+    <property name="ref.lib" value="${jmeter.home}/lib"/>
+    <property name="jar.file" value="${basedir}/droc.jar"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="version" value="1.0"/>
+
+    <path id="class.path">
+      <fileset dir="${ref.lib}" includes="**/*.jar"/>
+    </path>
+	
+    <target name="echo-properties">
+      <echo>JMETER_HOME: ${jmeter.home}</echo>
+      <echo>JMETER_PLUGIN_INSTALLATION_DIR: ${jmeter.plugin-lib}</echo>
+    </target>
+		
+    <target name="-init">
+      <delete file="${jar.file}"/>
+      <delete dir="${build.dir}"/>
+      <mkdir dir="${build.dir}"/>
+      <mkdir dir="${build.dir}/classes"/>
+    </target>
+    
+    <target name="-compile" depends="-init">
+      <javac source="1.7" target="1.7" debug="true" classpathref="class.path" srcdir="${basedir}/src" 
+       	      destdir="${build.dir}/classes" includeantruntime="true"/>
+       <copy todir="${build.dir}/classes/org/apache/jmeter/resources/" overwrite="true">
+         <fileset file="${basedir}/src/core/org/apache/jmeter/resources/*.properties"/>
+       </copy>
+    </target>
+                       
+    <target name="build-jar" depends="-compile" description="Package the jar file." >
+      <jar destfile="${jar.file}">
+        <manifest>
+    	  <attribute name="Built-By" value="${user.name}"/>
+    	  <attribute name="Title" value="DeterministicRandomOrderController"/>
+    	  <attribute name="Version" value="${version}"/>
+        </manifest>
+        <fileset dir="${build.dir}/classes" includes="**/*.class, **/*.properties" />
+      </jar>
+    </target>
+               
+</project>
